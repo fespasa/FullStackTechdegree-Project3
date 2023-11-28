@@ -24,6 +24,7 @@ jobRoleField.addEventListener("change", () => {
 /* show only the colors of each model of t-shirt */
 designField.addEventListener("change", (e) => {
     colorField.disabled = false;
+    colorField.firstElementChild.removeAttribute("selected");
     for (i = 1; i < colorField.children.length; i++) {
         if(e.target.value === colorField.children[i].getAttribute("data-theme")){
             colorField.children[i].removeAttribute("hidden");
@@ -31,4 +32,5 @@ designField.addEventListener("change", (e) => {
             colorField.children[i].setAttribute("hidden", "");
         }
     }
+    document.querySelector(`[data-theme='${e.target.value}']`).setAttribute("selected", "");
 });
