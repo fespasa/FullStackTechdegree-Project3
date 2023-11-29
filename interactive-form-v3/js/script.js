@@ -4,6 +4,7 @@ const jobRoleField = document.querySelector('#title');
 const otherJobRoleField = document.querySelector('#other-job-role');
 const colorField = document.querySelector('#color');
 const designField = document.querySelector('#design');
+const activitiesFieldset = document.querySelector('#activities');
 
 /* add focus at the first input when the page loads */
 window.addEventListener("load", () => {
@@ -33,4 +34,17 @@ designField.addEventListener("change", (e) => {
         }
     }
     document.querySelector(`[data-theme='${e.target.value}']`).setAttribute("selected", "");
+});
+
+/* Activities Section */
+let totalCost = 0;
+activitiesFieldset.addEventListener("change", (e) => {
+    if (e.target.hasAttribute("selected")) {
+        e.target.removeAttribute("selected");
+        totalCost -= parseInt(e.target.getAttribute("data-cost"), 10);
+    } else {
+        e.target.setAttribute("selected", "");
+        totalCost += parseInt(e.target.getAttribute("data-cost"), 10);
+    }
+    document.querySelector('#activities-cost').innerHTML = `Total: $${totalCost}`;
 });
