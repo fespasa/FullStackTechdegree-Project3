@@ -7,6 +7,7 @@ const designField = document.querySelector('#design');
 const activitiesFieldset = document.querySelector('#activities');
 const paymentField = document.querySelector('#payment');
 const conferenceForm = document.querySelector('form');
+const activitiesInputs = document.querySelectorAll('#activities input');
 
 /*===== add focus at the first input when the page loads =====*/
 window.addEventListener("load", () => {
@@ -91,7 +92,6 @@ conferenceForm.addEventListener("submit", (e) => {
     noSubmit(!isEmailValid(document.querySelector('#email')));
 
     /* Activities Validation - At least one selected */
-    const activitiesInputs = document.querySelectorAll('#activities input');
     let activitiesCounter = 0;
     for (let i = 0; i < activitiesInputs.length; i++){
         if (activitiesInputs[i].hasAttribute("selected")){
@@ -110,3 +110,15 @@ conferenceForm.addEventListener("submit", (e) => {
         noSubmit(!ccCvvRegex.test(document.querySelector('#cvv'))); // cvv field validation
     }
 });
+
+/*===== Activities Section Visibility =====*/
+for (let i = 0; i < activitiesInputs.length; i++) {
+    //add focus class when it focuses
+    activitiesInputs[i].addEventListener('focus', function() {
+        activitiesInputs[i].parentNode.classList.add('focus');
+    });
+    //remove focus class when it blurs
+    activitiesInputs[i].addEventListener('blur', function() {
+        activitiesInputs[i].parentNode.classList.remove('focus');
+    });
+}
