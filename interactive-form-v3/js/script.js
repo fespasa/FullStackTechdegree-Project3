@@ -8,6 +8,15 @@ const activitiesFieldset = document.querySelector('#activities');
 const paymentField = document.querySelector('#payment');
 const conferenceForm = document.querySelector('form');
 const activitiesInputs = document.querySelectorAll('#activities input');
+const nameField = document.querySelector('#name');
+const emailField = document.querySelector('#email');
+const ccNumField = document.querySelector('#cc-num');
+const zipField = document.querySelector('#zip');
+const cvvField = document.querySelector('#cvv');
+
+const ccNumRegex = /^\d{13,16}$/;
+const ccZipRegex = /^\d{5}$/;
+const ccCvvRegex = /^\d{3}$/;
 
 /*===== add focus at the first input when the page loads =====*/
 window.addEventListener("load", () => {
@@ -79,35 +88,57 @@ conferenceForm.addEventListener("submit", (e) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(fieldValue);
     }
-    const noSubmit = (condition) => {
+    const noSubmit = (validationField) => {
+        console.log(validationField);
+        const condition = false;
+        switch (validationField) {
+            case nameField:
+                condition = isFieldEmpty(nameField);
+            case emailField:
+                condition = isFieldEmpty(emailField);
+            case activitiesInputs:
+                let activitiesCounter = 0;
+                for (let i = 0; i < activitiesInputs.length; i++){
+                    if (activitiesInputs[i].hasAttribute("selected")){
+                        activitiesCounter++;
+                    }
+                }
+                condition = activitiesCounter === 0;
+            case ccNumField:
+                condition = !ccNumRegex.test(ccNumField.value);
+            case zipField:
+                condition = !ccZipRegex.test(zipField.value);
+            case cvvField:
+                condition = !ccCvvRegex.test(cvvField.value);
+        }
+    
         if(condition) {
+            console.log(`No Valid ${validationField}`);
             e.preventDefault();
+            validationField.parentNode.classList.add('no-valid');
+            validationField.parentNode.classList.remove('valid');
+        } else {
+            e.preventDefault();
+            console.log(`Valid ${validationField}`);
+            validationField.parentNode.classList.add('valid');
+            validationField.parentNode.classList.remove('no-valid');
         }
     }
 
     /* Name Validation - Not empty or blank */
-    noSubmit(isFieldEmpty(document.querySelector('#name')));
+    noSubmit(isFieldEmpty(nameField));
 
     /* Email Validation - Correct email format */
-    noSubmit(!isEmailValid(document.querySelector('#email')));
+    noSubmit(!isEmailValid(emailField));
 
     /* Activities Validation - At least one selected */
-    let activitiesCounter = 0;
-    for (let i = 0; i < activitiesInputs.length; i++){
-        if (activitiesInputs[i].hasAttribute("selected")){
-            activitiesCounter++;
-        }
-    }
-    noSubmit(activitiesCounter === 0);
+    noSubmit(activitiesInputs);
 
     /* Credit Card Validation - 13 to 16 digit CC number */
-    const ccNumRegex = /^\d{13,16}$/;
-    const ccZipRegex = /^\d{5}$/;
-    const ccCvvRegex = /^\d{3}$/;
     if(document.querySelector('#payment').value === "credit-card") {
-        noSubmit(!ccNumRegex.test(document.querySelector('#cc-num').value)); // CC nº field validation
-        noSubmit(!ccZipRegex.test(document.querySelector('#zip'))); // zip field validation
-        noSubmit(!ccCvvRegex.test(document.querySelector('#cvv'))); // cvv field validation
+        noSubmit(ccNumField); // CC nº field validation
+        noSubmit(zipField); // zip field validation
+        noSubmit(cvvField); // cvv field validation
     }
 });
 
