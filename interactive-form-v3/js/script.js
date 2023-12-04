@@ -7,6 +7,7 @@ const designField = document.querySelector('#design');
 const activitiesFieldset = document.querySelector('#activities');
 const paymentField = document.querySelector('#payment');
 const conferenceForm = document.querySelector('form');
+<<<<<<< HEAD
 const activitiesInputs = document.querySelectorAll('#activities input');
 const nameField = document.querySelector('#name');
 const emailField = document.querySelector('#email');
@@ -17,6 +18,8 @@ const cvvField = document.querySelector('#cvv');
 const ccNumRegex = /^\d{13,16}$/;
 const ccZipRegex = /^\d{5}$/;
 const ccCvvRegex = /^\d{3}$/;
+=======
+>>>>>>> parent of d932b5e (Activities Section Visibility)
 
 /*===== add focus at the first input when the page loads =====*/
 window.addEventListener("load", () => {
@@ -132,7 +135,18 @@ conferenceForm.addEventListener("submit", (e) => {
     noSubmit(!isEmailValid(emailField));
 
     /* Activities Validation - At least one selected */
+<<<<<<< HEAD
     noSubmit(activitiesInputs);
+=======
+    const activitiesInputs = document.querySelectorAll('#activities input');
+    let activitiesCounter = 0;
+    for (let i = 0; i < activitiesInputs.length; i++){
+        if (activitiesInputs[i].hasAttribute("selected")){
+            activitiesCounter++;
+        }
+    }
+    noSubmit(activitiesCounter === 0);
+>>>>>>> parent of d932b5e (Activities Section Visibility)
 
     /* Credit Card Validation - 13 to 16 digit CC number */
     if(document.querySelector('#payment').value === "credit-card") {
@@ -141,15 +155,3 @@ conferenceForm.addEventListener("submit", (e) => {
         noSubmit(cvvField); // cvv field validation
     }
 });
-
-/*===== Activities Section Visibility =====*/
-for (let i = 0; i < activitiesInputs.length; i++) {
-    //add focus class when it focuses
-    activitiesInputs[i].addEventListener('focus', function() {
-        activitiesInputs[i].parentNode.classList.add('focus');
-    });
-    //remove focus class when it blurs
-    activitiesInputs[i].addEventListener('blur', function() {
-        activitiesInputs[i].parentNode.classList.remove('focus');
-    });
-}
