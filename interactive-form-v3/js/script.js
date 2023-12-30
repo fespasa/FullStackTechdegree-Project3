@@ -7,19 +7,14 @@ const designField = document.querySelector('#design');
 const activitiesFieldset = document.querySelector('#activities');
 const paymentField = document.querySelector('#payment');
 const conferenceForm = document.querySelector('form');
-<<<<<<< HEAD
 const activitiesInputs = document.querySelectorAll('#activities input');
 const nameField = document.querySelector('#name');
 const emailField = document.querySelector('#email');
-const ccNumField = document.querySelector('#cc-num');
-const zipField = document.querySelector('#zip');
-const cvvField = document.querySelector('#cvv');
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ccNumRegex = /^\d{13,16}$/;
 const ccZipRegex = /^\d{5}$/;
 const ccCvvRegex = /^\d{3}$/;
-=======
->>>>>>> parent of d932b5e (Activities Section Visibility)
 
 /*===== add focus at the first input when the page loads =====*/
 window.addEventListener("load", () => {
@@ -82,6 +77,7 @@ paymentField.addEventListener("change", (e) => {
 
 /*===== Form Validation =====*/
 conferenceForm.addEventListener("submit", (e) => {
+    let badFields = 0;
     const isFieldEmpty = (field) => {
         const fieldValue = field.value.trim();
         return fieldValue === "";
@@ -91,53 +87,47 @@ conferenceForm.addEventListener("submit", (e) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(fieldValue);
     }
-    const noSubmit = (validationField) => {
-        console.log(validationField);
-        const condition = false;
-        switch (validationField) {
-            case nameField:
-                condition = isFieldEmpty(nameField);
-            case emailField:
-                condition = isFieldEmpty(emailField);
-            case activitiesInputs:
-                let activitiesCounter = 0;
-                for (let i = 0; i < activitiesInputs.length; i++){
-                    if (activitiesInputs[i].hasAttribute("selected")){
-                        activitiesCounter++;
-                    }
-                }
-                condition = activitiesCounter === 0;
-            case ccNumField:
-                condition = !ccNumRegex.test(ccNumField.value);
-            case zipField:
-                condition = !ccZipRegex.test(zipField.value);
-            case cvvField:
-                condition = !ccCvvRegex.test(cvvField.value);
-        }
-    
-        if(condition) {
-            console.log(`No Valid ${validationField}`);
-            e.preventDefault();
-            validationField.parentNode.classList.add('no-valid');
-            validationField.parentNode.classList.remove('valid');
+    // if it's not correct we set the no-valid class and show the hint. And we increment the number of badFields
+    const isNotCorrect = (field) => {
+        badFields += 1;
+        if (field === activitiesFieldset){
+            activitiesFieldset.classList.add('not-valid');
+            activitiesFieldset.children[3].style.display = "inline";
+            activitiesFieldset.classList.remove('valid');        
         } else {
-            e.preventDefault();
-            console.log(`Valid ${validationField}`);
-            validationField.parentNode.classList.add('valid');
-            validationField.parentNode.classList.remove('no-valid');
-        }
+            field.parentNode.classList.add('not-valid');
+            field.nextElementSibling.style.display = "inline";
+            field.parentNode.classList.remove('valid');
+        }  
+    }
+    // if it's correct we add the valid class and we hide the hint
+    const isCorrect = (field) => {
+        if (field === activitiesFieldset){
+            activitiesFieldset.classList.add('valid');
+            activitiesFieldset.children[3].style.display = "none";
+            activitiesFieldset.classList.remove('not-valid');        
+        } else {
+            field.parentNode.classList.add('valid');
+            field.nextElementSibling.style.display = "none";
+            field.parentNode.classList.remove('not-valid');
+        }  
     }
 
     /* Name Validation - Not empty or blank */
-    noSubmit(isFieldEmpty(nameField));
-
+    if(isFieldEmpty(nameField)){
+        isNotCorrect(nameField);
+    } else {
+        isCorrect(nameField);
+    }
+    
     /* Email Validation - Correct email format */
-    noSubmit(!isEmailValid(emailField));
+    if(!isEmailValid(emailField)){
+        isNotCorrect(emailField);
+    } else {
+        isCorrect(emailField);
+    }
 
     /* Activities Validation - At least one selected */
-<<<<<<< HEAD
-    noSubmit(activitiesInputs);
-=======
     const activitiesInputs = document.querySelectorAll('#activities input');
     let activitiesCounter = 0;
     for (let i = 0; i < activitiesInputs.length; i++){
@@ -145,13 +135,43 @@ conferenceForm.addEventListener("submit", (e) => {
             activitiesCounter++;
         }
     }
-    noSubmit(activitiesCounter === 0);
->>>>>>> parent of d932b5e (Activities Section Visibility)
+    if(activitiesCounter === 0){
+        isNotCorrect(activitiesFieldset);
+    } else {
+        isCorrect(activitiesFieldset);
+    }
 
     /* Credit Card Validation - 13 to 16 digit CC number */
     if(document.querySelector('#payment').value === "credit-card") {
-        noSubmit(ccNumField); // CC nº field validation
-        noSubmit(zipField); // zip field validation
-        noSubmit(cvvField); // cvv field validation
+        if(!ccNumRegex.test(document.querySelector('#cc-num').value)){ // CC nº field validation
+            isNotCorrect(document.querySelector('#cc-num')); 
+        } else {
+            isCorrect(document.querySelector('#cc-num'));
+        }
+        if(!ccZipRegex.test(document.querySelector('#zip').value)){ // zip field validation
+            isNotCorrect(document.querySelector('#zip'));
+        } else {
+            isCorrect(document.querySelector('#zip'));
+        }
+        if(!ccCvvRegex.test(document.querySelector('#cvv').value)){ // cvv field validation
+            isNotCorrect(document.querySelector('#cvv'));
+        } else {
+            isCorrect(document.querySelector('#cvv'));
+        }
+    }
+    if (badFields > 0){
+        e.preventDefault();
     }
 });
+
+/*===== Activities Section Visibility =====*/
+for (let i = 0; i < activitiesInputs.length; i++) {
+    //add focus class when it focuses
+    activitiesInputs[i].addEventListener('focus', function() {
+        activitiesInputs[i].parentNode.classList.add('focus');
+    });
+    //remove focus class when it blurs
+    activitiesInputs[i].addEventListener('blur', function() {
+        activitiesInputs[i].parentNode.classList.remove('focus');
+    });
+}
