@@ -167,11 +167,25 @@ conferenceForm.addEventListener("submit", (e) => {
 /*===== Activities Section Visibility =====*/
 for (let i = 0; i < activitiesInputs.length; i++) {
     //add focus class when it focuses
-    activitiesInputs[i].addEventListener('focus', function() {
+    activitiesInputs[i].addEventListener('focus', () => {
         activitiesInputs[i].parentNode.classList.add('focus');
     });
     //remove focus class when it blurs
-    activitiesInputs[i].addEventListener('blur', function() {
+    activitiesInputs[i].addEventListener('blur', () => {
         activitiesInputs[i].parentNode.classList.remove('focus');
     });
+    //conflicting activity times
+    activitiesInputs[i].addEventListener('select', () => {
+        const activityTime = activitiesInputs[i].getAttribute('data-day-and-time');
+        for (let it = 0; it < activitiesInputs.length; it++){
+            if ( it !== i){
+                if (activitiesInputs[it].getAttribute('data-day-and-time') === activityTime){
+                    activitiesInputs[it].parentNode.classList.add('disabled');
+                } else {
+                    activitiesInputs[it].parentNode.classList.remove('disabled');
+                }
+            }
+        }
+    });
 }
+
